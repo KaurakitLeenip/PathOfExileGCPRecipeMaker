@@ -49,8 +49,9 @@ def pull_gems(poe_session_id):
                                 gemLevel = int(gemLevel[0])
                             if property['name'] == 'Quality' and gemLevel != 20:
                                 quality = int(property['values'][0][0].strip("+%"))
-                                if quality < 20:               
+                                if quality < 20:
                                     list_of_gems[quality] += 1
+
                 print("Pulled Stash ID ", i)
                 i += 1
 

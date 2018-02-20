@@ -8,9 +8,9 @@ def main():
 
     list_of_gems, results, remaining_gems = {}, {}, {}
     total_gems, remainder, gems_in_results = 0, 0, 0
-    sess_id = input("Enter your Path Of Exile Session ID\n")
     temp_keys = []
 
+    sess_id = input("Enter your Path Of Exile Session ID\n")
     list_of_gems = pull_gems(sess_id)
     ordered_list_of_gems = OrderedDict(sorted(list_of_gems.items(), key=lambda t: t[1], reverse=True))
     print(sum(ordered_list_of_gems.values()))
@@ -19,7 +19,7 @@ def main():
 
     list_of_recipes = subsets_with_sum(gem_keys, 40)
     print(list_of_recipes)
-    num = getKey(ordered_list_of_gems, 0)
+    num = get_key(ordered_list_of_gems, 0)
     list_of_recipes = sorted(list_of_recipes, key=lambda x:(x != num))
     print(list_of_recipes)
 
