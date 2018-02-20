@@ -1,4 +1,4 @@
-def checkGems(ordered_list_of_gems, array_of_gems):
+def check_gems(ordered_list_of_gems, array_of_gems):
     """
     checks if a set of gems exists in an orderedDict of
     gems
@@ -14,7 +14,7 @@ def checkGems(ordered_list_of_gems, array_of_gems):
 
     return exists
 
-def getKey(ordered_list_of_gems, index):
+def get_key(ordered_list_of_gems, index):
     """
     gets a indexed value from an OrderedDict
     :param ordered_list_of_gems: list of gems by quality number
@@ -25,7 +25,7 @@ def getKey(ordered_list_of_gems, index):
     return arr[index]
 
 
-def findEmptyBuckets(ordered_list_of_gems):
+def find_empty_buckets(ordered_list_of_gems):
     """
     find the quality categories that are empty
     :param ordered_list_of_gems: list of gems by quality number
@@ -41,7 +41,7 @@ def findEmptyBuckets(ordered_list_of_gems):
 
 def subsets_with_sum(lst, target):
     """
-
+    finds all subsets of a set of numbers which sum up to a target
     :param lst: list of gem qualities
     :param target: the target number to add up to
     :return: recursive call

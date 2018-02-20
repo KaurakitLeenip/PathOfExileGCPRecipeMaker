@@ -2,7 +2,7 @@ from util import *
 from collections import OrderedDict
 
 
-def gemCalc(ordered_list_of_gems, list_of_recipes):
+def gem_calc(ordered_list_of_gems, list_of_recipes):
     """
     Will take a OrderedDict of gemQuality:amount and an array containing gem recipes
     will sort the recipes in order of the top two largest buckets of gems
@@ -12,13 +12,13 @@ def gemCalc(ordered_list_of_gems, list_of_recipes):
     :return: all recipes that will be required and how many times to use them
     """
     results = {}
-    gems_to_remove = findEmptyBuckets(ordered_list_of_gems)
+    gems_to_remove = find_empty_buckets(ordered_list_of_gems)
     num_gems = sum(list(ordered_list_of_gems.values()))
     iteration_target = int(num_gems/3)
 
     for i in range(iteration_target):
-        largest = getKey(ordered_list_of_gems, 0)
-        second_largest = getKey(ordered_list_of_gems, 1)
+        largest = get_key(ordered_list_of_gems, 0)
+        second_largest = get_key(ordered_list_of_gems, 1)
         list_of_recipes.sort(key=lambda x:(largest not in x, second_largest not in x))
 
         if len(list_of_recipes) < 1:
@@ -30,7 +30,7 @@ def gemCalc(ordered_list_of_gems, list_of_recipes):
                 if len(list_of_recipes) < 1:
                     break
                 j = list_of_recipes[0]
-        if checkGems(ordered_list_of_gems, j):
+        if check_gems(ordered_list_of_gems, j):
             for k in j:
                 if ordered_list_of_gems[int(k)] >= 1:
                     ordered_list_of_gems[int(k)] = ordered_list_of_gems[int(k)] - 1
@@ -39,7 +39,7 @@ def gemCalc(ordered_list_of_gems, list_of_recipes):
             elif str(j) in results:
                 results[str(j)] += 1
             ordered_list_of_gems = OrderedDict(sorted(ordered_list_of_gems.items(), key=lambda t: t[1], reverse=True))
-            gems_to_remove = findEmptyBuckets(ordered_list_of_gems)
+            gems_to_remove = find_empty_buckets(ordered_list_of_gems)
 
     results = OrderedDict(sorted(results.items(), key=lambda t: t[1], reverse=True))
     remaining_gems = sum(list(ordered_list_of_gems.values()))

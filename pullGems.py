@@ -6,7 +6,14 @@ POE_STASH_URL = 'https://pathofexile.com/character-window/get-stash-items?accoun
 POE_NUM_TABS_URL = 'https://pathofexile.com/character-window/get-stash-items?accountName=SerBubblez&league=Standard&tabIndex=1&tabs=1'
 
 
-def pullGems(poe_session_id):
+def pull_gems(poe_session_id):
+    """
+    will use a session id to pull stash tab data from the poe website - json -> dictionary.
+    iterates through all of it to pull gem data, leaving out level 20 gems as you probably dont want
+    to use those for the recipe
+    :param poe_session_id: session id from cookies that authenticates user
+    :return: dictionary containing gem quality:amount
+    """
     break_interval = 1
     list_of_gems = {}
 
@@ -29,7 +36,7 @@ def pullGems(poe_session_id):
                 print(response.status_code, response.reason)
                 sleepTime = 60 * break_interval
                 break_interval += 1
-                print("Being Throttled, please wait ", sleepTime, "seconds")
+                print("Being Throttled, please wait", sleepTime, "seconds")
                 sleep(sleepTime)
 
             else:
@@ -42,7 +49,7 @@ def pullGems(poe_session_id):
                                 gemLevel = int(gemLevel[0])
                             if property['name'] == 'Quality' and gemLevel != 20:
                                 quality = int(property['values'][0][0].strip("+%"))
-                                if quality < 20:
+                                if quality < 20:               
                                     list_of_gems[quality] += 1
                 print("Pulled Stash ID ", i)
                 i += 1
