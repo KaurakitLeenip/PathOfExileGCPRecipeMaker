@@ -29,6 +29,16 @@ def getLowestNum(OrderedListOfGems, arrayOfGems):
 
     return lowest
 
-def getLargestGroup(OrderedListOfGems):
+
+def getKey(OrderedListOfGems, index):
     arr = list(OrderedListOfGems.keys())
-    return arr[0]
+    return arr[index]
+
+def findEmptyBuckets(OrderedListOfGems):
+    gemsToRemove = []
+    for key, value in OrderedListOfGems.items():
+        if value == 0:
+            gemsToRemove.append(key)
+
+    return gemsToRemove
+
