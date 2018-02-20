@@ -18,6 +18,7 @@ def main():
     gems = inputStr.split(",")
     gems = list(map(int, gems))
     remainder = sum(gems)
+    print(remainder)
     inputStr = input("1. For least remaining gems\n2. For least amount of recipes\n")
 
     for i in listOfGems:
@@ -30,8 +31,10 @@ def main():
 
     if inputStr == "1":
         listOfRecipes = subsets_with_sum(gemKeys, 40)
-        num = getLargestGroup(OrderedListOfGems)
+        print(listOfRecipes)
+        num = getKey(OrderedListOfGems, 0)
         listOfRecipes = sorted(listOfRecipes, key=lambda x:(x != num))
+        print(listOfRecipes)
 
         temp = OrderedListOfGems
         tResults, tRemainder, tRemainingGems = gemCalc(temp, listOfRecipes)
