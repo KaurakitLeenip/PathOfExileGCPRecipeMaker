@@ -1,98 +1,42 @@
 from gemCalc import gemCalc
 from collections import OrderedDict
 from util import *
-from subsetSum import *
+from pullGems import pullGems
+
 
 def main():
 
-    listOfGems, results, tResults, remainingGems, tRemainingGems = {}, {}, {}, {}, {}
-    totalGems, tRemainder = 0, 0
-    tKeys = []
+    list_of_gems, results, remaining_gems = {}, {}, {}
+    total_gems, remainder, gems_in_results = 0, 0, 0
+    sess_id = input("Enter your Path Of Exile Session ID")
+    temp_keys = []
 
-    for i in range(1,21):
-        quality = 21-i
-        listOfGems[quality] = 0;
+    list_of_gems = pullGems(sess_id)
+    ordered_list_of_gems = OrderedDict(sorted(list_of_gems.items(), key=lambda t: t[1], reverse=True))
+    print(sum(ordered_list_of_gems.values()))
+    gem_keys = list(ordered_list_of_gems.keys())
+    gem_keys.remove(0)
 
+    list_of_recipes = subsets_with_sum(gem_keys, 40)
+    print(list_of_recipes)
+    num = getKey(ordered_list_of_gems, 0)
+    list_of_recipes = sorted(list_of_recipes, key=lambda x:(x != num))
+    print(list_of_recipes)
 
-    inputStr = input("Please Enter CSV for Quality Gems descending from 20%\n")
-    gems = inputStr.split(",")
-    gems = list(map(int, gems))
-    remainder = sum(gems)
-    print(remainder)
-    inputStr = input("1. For least remaining gems\n2. For least amount of recipes\n")
-
-    for i in listOfGems:
-        listOfGems[i] = gems[20-i]
-
-    OrderedListOfGems = OrderedDict(sorted(listOfGems.items(), key=lambda t: t[1], reverse=True))
-    print(sum(OrderedListOfGems.values()))
-    gemKeys = list(OrderedListOfGems.keys())
-
-
-    if inputStr == "1":
-        listOfRecipes = subsets_with_sum(gemKeys, 40)
-        print(listOfRecipes)
-        num = getKey(OrderedListOfGems, 0)
-        listOfRecipes = sorted(listOfRecipes, key=lambda x:(x != num))
-        print(listOfRecipes)
-
-        temp = OrderedListOfGems
-        tResults, tRemainder, tRemainingGems = gemCalc(temp, listOfRecipes)
-        if tRemainder < remainder:
-            results = tResults
-            remainder = tRemainder
-            remainingGems = tRemainingGems
-            print(i)
-
-        """listOfRecipes = subsetSum(gemKeys, 40)
-        listOfRecipes.sort(key=lambda x:(x != list(OrderedListOfGems.keys())[0], x))
-
-
-        temp = OrderedListOfGems
-        tResults, tRemainder, tRemainingGems = gemCalc(temp, listOfRecipes)
-        if tRemainder < remainder:
-            results = tResults
-            remainder = tRemainder
-            remainingGems = tRemainingGems
-            print(i)
-        
-
-    elif inputStr == "2":
-        listOfRecipes = subsets_with_sum(gemKeys, 40)
-        listOfRecipes.sort(key=len)
-
-        tResults, tRemainder, tRemainingGems = gemCalc(OrderedListOfGems, listOfRecipes)
-        if not bool(results):
-            results = tResults
-        if len(tResults) < len(results) and tRemainder < 80:
-            remainingGems = tRemainingGems
-            results = tResults
-            remainder = tRemainder
-
-        listOfRecipes = subsetSum(gemKeys, 40)
-        listOfRecipes.sort(key=len)
-
-
-        tResults, tRemainder, tRemainingGems = gemCalc(OrderedListOfGems, listOfRecipes)
-        if len(tResults) < len(results):
-            if tRemainder < 100:
-                remainingGems = tRemainingGems
-                results = tResults
-                remainder = tRemainder
-        """
+    temp = ordered_list_of_gems
+    results, remainder, remaining_gems = gemCalc(temp, list_of_recipes)
 
     for k,v in results.items():
-        tKeys = k.strip('[]').split(', ')
-        tKeys = list(map(int, tKeys))
-        tKeys.sort(reverse=True)
-        totalGems += (len(tKeys) * v)
-        print("Quality Gems Set", tKeys, ':', v)
+        temp_keys = k.strip('[]').split(', ')
+        temp_keys = list(map(int, temp_keys))
+        gems_in_results += (len(temp_keys)*v)
+        temp_keys.sort(reverse=True)
+        total_gems += (len(temp_keys) * v)
+        print("Quality Gems Set", temp_keys, ':', v)
 
-        #print("Quality Gems Set", k, ":", v)
     print(remainder, "Gems Remaining")
     print(len(results), "different recipes")
-    print(remainingGems)
-    print(totalGems)
+
 
 if __name__ == "__main__":
     main()

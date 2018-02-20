@@ -1,44 +1,60 @@
-"""
-checks if a set of gems exists in an orderedDict of
-gems
-
-
-"""
-def checkGems(OrderedListOfGems, arrayOfGems):
-
+def checkGems(ordered_list_of_gems, array_of_gems):
+    """
+    checks if a set of gems exists in an orderedDict of
+    gems
+    :param ordered_list_of_gems: list of gems by quality number
+    :param array_of_gems: recipe to
+    :return: bool if item exists
+    """
     exists = True
 
-    for i in arrayOfGems:
-        if not i in OrderedListOfGems or OrderedListOfGems[i] == 0:
+    for i in array_of_gems:
+        if not i in ordered_list_of_gems or ordered_list_of_gems[i] == 0:
             exists = False
 
     return exists
 
-"""
-gets the gem quality with the lowest amount
-"""
-def getLowestNum(OrderedListOfGems, arrayOfGems):
-
-    lowest = float('inf')
-    arrayOfGems = list(map(int, arrayOfGems))
-
-
-    for i in arrayOfGems:
-        if OrderedListOfGems[i] < lowest:
-            lowest = OrderedListOfGems[i]
-
-    return lowest
-
-
-def getKey(OrderedListOfGems, index):
-    arr = list(OrderedListOfGems.keys())
+def getKey(ordered_list_of_gems, index):
+    """
+    gets a indexed value from an OrderedDict
+    :param ordered_list_of_gems: list of gems by quality number
+    :param index: index number to return value of
+    :return: gem quality at that index
+    """
+    arr = list(ordered_list_of_gems.keys())
     return arr[index]
 
-def findEmptyBuckets(OrderedListOfGems):
-    gemsToRemove = []
-    for key, value in OrderedListOfGems.items():
+
+def findEmptyBuckets(ordered_list_of_gems):
+    """
+    find the quality categories that are empty
+    :param ordered_list_of_gems: list of gems by quality number
+    :return: gem qualities that have no items
+    """
+    gems_to_remove = []
+    for key, value in ordered_list_of_gems.items():
         if value == 0:
-            gemsToRemove.append(key)
+            gems_to_remove.append(key)
 
-    return gemsToRemove
+    return gems_to_remove
 
+
+def subsets_with_sum(lst, target):
+    """
+
+    :param lst: list of gem qualities
+    :param target: the target number to add up to
+    :return: recursive call
+    """
+    x = 0
+    results = []
+
+    def _subset(idx, l, results, target):
+        if target == sum(l) and len(l) < 5:
+            results.append(l)
+        elif target < sum(l):
+            return
+        for i in range(idx, len(lst)):
+            _subset(i, l + [lst[i]], results, target)
+        return results
+    return _subset(0, [], [], target)
