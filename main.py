@@ -1,11 +1,12 @@
 from gemCalc import gemCalc
 from collections import OrderedDict
+from util import *
 from subsetSum import *
 
 def main():
 
-    listOfGems, results, tResults, remainingGems, tRemainingGems = {}
-    totalGems, tRemainder = 0
+    listOfGems, results, tResults, remainingGems, tRemainingGems = {}, {}, {}, {}, {}
+    totalGems, tRemainder = 0, 0
     tKeys = []
 
     for i in range(1,21):
@@ -29,8 +30,8 @@ def main():
 
     if inputStr == "1":
         listOfRecipes = subsets_with_sum(gemKeys, 40)
-        listOfRecipes = sorted(listOfRecipes, key=lambda x:(x != 11))
-        print(listOfRecipes)
+        num = getLargestGroup(OrderedListOfGems)
+        listOfRecipes = sorted(listOfRecipes, key=lambda x:(x != num))
 
         temp = OrderedListOfGems
         tResults, tRemainder, tRemainingGems = gemCalc(temp, listOfRecipes)
@@ -40,7 +41,7 @@ def main():
             remainingGems = tRemainingGems
             print(i)
 
-        listOfRecipes = subsetSum(gemKeys, 40)
+        """listOfRecipes = subsetSum(gemKeys, 40)
         listOfRecipes.sort(key=lambda x:(x != list(OrderedListOfGems.keys())[0], x))
 
 
@@ -51,7 +52,7 @@ def main():
             remainder = tRemainder
             remainingGems = tRemainingGems
             print(i)
-
+        
 
     elif inputStr == "2":
         listOfRecipes = subsets_with_sum(gemKeys, 40)
@@ -75,6 +76,7 @@ def main():
                 remainingGems = tRemainingGems
                 results = tResults
                 remainder = tRemainder
+        """
 
     for k,v in results.items():
         tKeys = k.strip('[]').split(', ')

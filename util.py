@@ -29,3 +29,6 @@ def getLowestNum(OrderedListOfGems, arrayOfGems):
 
     return lowest
 
+def getLargestGroup(OrderedListOfGems):
+    arr = list(OrderedListOfGems.keys())
+    return arr[0]
