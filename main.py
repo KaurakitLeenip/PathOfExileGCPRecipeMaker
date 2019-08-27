@@ -1,30 +1,21 @@
 from gemCalc import gem_calc
 from collections import OrderedDict
 from util import *
-from pullGems import pull_gems
+from pullGems import *
 
 
 def main():
 
-    list_of_gems, results, remaining_gems = {}, {}, {}
     total_gems, remainder, gems_in_results = 0, 0, 0
-    temp_keys = []
-
-    sess_id = input("Enter your Path Of Exile Session ID\n")
-    list_of_gems = pull_gems(sess_id)
-    ordered_list_of_gems = OrderedDict(sorted(list_of_gems.items(), key=lambda t: t[1], reverse=True))
-    print(sum(ordered_list_of_gems.values()))
+    ordered_list_of_gems = get_stash()
     gem_keys = list(ordered_list_of_gems.keys())
     gem_keys.remove(0)
 
-    list_of_recipes = subsets_with_sum(gem_keys, 40)
-    print(list_of_recipes)
+    list_of_recipes = subsets_with_sum(gem_keys, 40, 6)
     num = get_key(ordered_list_of_gems, 0)
     list_of_recipes = sorted(list_of_recipes, key=lambda x:(x != num))
-    print(list_of_recipes)
 
-    temp = ordered_list_of_gems
-    results, remainder, remaining_gems = gem_calc(temp, list_of_recipes)
+    results, remainder, remaining_gems = gem_calc(ordered_list_of_gems, list_of_recipes)
 
     for k,v in results.items():
         temp_keys = k.strip('[]').split(', ')

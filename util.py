@@ -9,7 +9,7 @@ def check_gems(ordered_list_of_gems, array_of_gems):
     exists = True
 
     for i in array_of_gems:
-        if not i in ordered_list_of_gems or ordered_list_of_gems[i] == 0:
+        if i not in ordered_list_of_gems or ordered_list_of_gems[i] == 0:
             exists = False
 
     return exists
@@ -39,18 +39,19 @@ def find_empty_buckets(ordered_list_of_gems):
     return gems_to_remove
 
 
-def subsets_with_sum(lst, target):
+def subsets_with_sum(lst, target, set_size):
     """
     finds all subsets of a set of numbers which sum up to a target
     :param lst: list of gem qualities
     :param target: the target number to add up to
+    :param set_size: the max number of gems in a recipe
     :return: recursive call
     """
     x = 0
     results = []
 
     def _subset(idx, l, results, target):
-        if target == sum(l) and len(l) < 5:
+        if target == sum(l) and len(l) < set_size-1:
             results.append(l)
         elif target < sum(l):
             return

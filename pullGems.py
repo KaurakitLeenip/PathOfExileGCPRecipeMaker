@@ -1,9 +1,24 @@
 import requests
 import json
 from time import sleep
+from collections import OrderedDict
 
-POE_STASH_URL = 'https://pathofexile.com/character-window/get-stash-items?accountName=SerBubblez&league=Standard&tabIndex='
-POE_NUM_TABS_URL = 'https://pathofexile.com/character-window/get-stash-items?accountName=SerBubblez&league=Standard&tabIndex=1&tabs=1'
+
+POE_STASH_URL = 'https://pathofexile.com/character-window/get-stash-items?accountName=SerBubblez&league=Legion&tabIndex='
+POE_NUM_TABS_URL = 'https://pathofexile.com/character-window/get-stash-items?accountName=SerBubblez&league=Legion&tabIndex=1&tabs=1'
+SESSION_ID = ''
+
+def get_stash():
+
+    sess_id = input("Enter your Path Of Exile Session ID\n")
+    list_of_gems = pull_gems(sess_id)
+    ordered_list_of_gems = OrderedDict(sorted(list_of_gems.items(), key=lambda t: t[1], reverse=True))
+    print(sum(ordered_list_of_gems.values()))
+
+    return ordered_list_of_gems
+
+
+
 
 
 def pull_gems(poe_session_id):
