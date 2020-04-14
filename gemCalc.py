@@ -14,13 +14,12 @@ def gem_calc(ordered_list_of_gems, list_of_recipes):
     results = {}
     gems_to_remove = find_empty_buckets(ordered_list_of_gems)
     num_gems = sum(list(ordered_list_of_gems.values()))
-    iteration_target = int(num_gems/3)
-
+    iteration_target = int(num_gems)
 
     for i in range(iteration_target):
         largest = get_key(ordered_list_of_gems, 0)
         second_largest = get_key(ordered_list_of_gems, 1)
-        list_of_recipes.sort(key=lambda x: (largest not in x))
+        list_of_recipes.sort(key=lambda x: (largest not in x, second_largest not in x))
         #, second_largest not in x
         if len(list_of_recipes) < 1:
             break
