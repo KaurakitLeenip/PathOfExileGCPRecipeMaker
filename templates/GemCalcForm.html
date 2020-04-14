@@ -10,15 +10,16 @@
 
 <div class="container" style="margin: auto;">
     <div class="row">
-        <form id="input" action="#" method="get">
+        <form id="input" action="#" method="post">
             PoE Session ID:<br>
             <input type="text" name="POESESSID" required/>
             <select id="league" name="League">
-                <option value="tempsc">Temporary Softcore</option>
-                <option value="temphc">Temporary Hardcore</option>
-                <option value="standardsc">Pernament Softcore</option>
-                <option value="standardhc">Pernament Hardcore</option>
+                {% for i in option_list %}
+                <option value="{{i}}">{{i}}</option>
+                {% endfor %}
             </select>
+            Maximum number of Gems in recipe:
+            <input type="text" name="max_recipe_len" required/>
             <input type="submit" value="Submit"/><br>
         </form>
     </div>

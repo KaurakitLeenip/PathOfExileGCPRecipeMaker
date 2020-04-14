@@ -9,14 +9,15 @@ POE_STASH_URL = 'https://pathofexile.com/character-window/get-stash-items?accoun
 POE_NUM_TABS_URL = 'https://pathofexile.com/character-window/get-stash-items?accountName=SerBubblez&league=Delirium&tabIndex=1&tabs=1'
 SESSION_ID = ''
 
-def gems():
+def gems(sess_id, max_recipe_length, league):
 
     total_gems, remainder, gems_in_results = 0, 0, 0
-    ordered_list_of_gems = get_stash()
+    ordered_list_of_gems = get_stash(sess_id, league)
     gem_keys = list(ordered_list_of_gems.keys())
-    gem_keys.remove(0)
 
-    list_of_recipes = subsets_with_sum(gem_keys, 40, 6)
+    gem_set = []
+
+    list_of_recipes = subsets_with_sum(gem_keys, 40, max_recipe_length)
     num = get_key(ordered_list_of_gems, 0)
     list_of_recipes = sorted(list_of_recipes, key=lambda x:(x != num))
 
@@ -28,20 +29,30 @@ def gems():
         gems_in_results += (len(temp_keys)*v)
         temp_keys.sort(reverse=True)
         total_gems += (len(temp_keys) * v)
+        gem_set.append("{0}: {1}".format(temp_keys, v))
         print("Quality Gems Set", temp_keys, ':', v)
 
     print(remainder, "Gems Remaining")
     print(len(results), "different recipes")
 
+    return gem_set
 
+def get_leagues():
+    res = []
+    league_url = "https://www.pathofexile.com/api/leagues"
+    with requests.Session() as sess:
+        response = sess.get(league_url)
+        content = json.loads(response.content)
+        for item in content:
+            res.append(item['id'])
+    return res
 
 
 #get account name from /character-window/get-account-name
 #add that to the stash url and num_tabs url
-def get_stash():
+def get_stash(sess_id, league):
 
-    sess_id = input("Enter your Path Of Exile Session ID\n")
-    list_of_gems = pull_gems(sess_id)
+    list_of_gems = pull_gems(sess_id.strip())
     ordered_list_of_gems = OrderedDict(sorted(list_of_gems.items(), key=lambda t: t[1], reverse=True))
     return ordered_list_of_gems
 
@@ -63,14 +74,13 @@ def pull_gems(poe_session_id):
     :param poe_session_id: session id from cookies that authenticates user
     :return: dictionary containing gem quality:amount
     """
-    break_interval = 1
     list_of_gems = {}
 
     for i in range(1, 20):
         list_of_gems[i] = 0
 
     sess_id = 'POESESSID=' + poe_session_id
-    url = 'https://pathofexile.com/character-window/get-stash-items?accountName={0}&league={1}tabIndex='.format(get_account_name(poe_session_id), 'Delirium')
+    url = 'https://pathofexile.com/character-window/get-stash-items?accountName={0}&league={1}&tabIndex='.format(get_account_name(poe_session_id), 'Standard')
     with requests.Session() as sess:
         i = 0
         headers = {'Cookie': sess_id}
@@ -78,20 +88,20 @@ def pull_gems(poe_session_id):
         content = json.loads(response.content)
         num_tabs = content["numTabs"]
         print(num_tabs, " total stash tabs")
-        while i < num_tabs:
+        while i < 44:
             url_string = url + str(i)
+            print(url_string)
             response = sess.get(url_string, headers=headers)
             if response.status_code > 200:
                 print(response.status_code, response.reason)
-                sleepTime = 60 * break_interval
-                break_interval += 1
+                sleepTime = 60
                 print("Being Throttled, please wait", sleepTime, "seconds")
                 sleep(sleepTime)
 
             else:
                 content = json.loads(response.content)
                 for item in content['items']:
-                    if 'Gem' in item['icon']:
+                    if 'Gem' in item['icon'] and 'properties' in item.keys():
                         for property in item['properties']:
                             if property['name'] == 'Level':
                                 gemLevel = property['values'][0][0].split(" ")
@@ -106,5 +116,5 @@ def pull_gems(poe_session_id):
 
     print(list_of_gems)
     return list_of_gems
-
-pull_gems("6630cbafa621cc72dc09a254518f587b")
+#print(get_leagues())
+#gems("6630cbafa621cc72dc09a254518f587b")

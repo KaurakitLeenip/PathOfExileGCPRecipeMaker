@@ -51,7 +51,7 @@ def subsets_with_sum(lst, target, set_size):
     results = []
 
     def _subset(idx, l, results, target):
-        if target == sum(l) and len(l) < set_size-1:
+        if target == sum(l) and len(l) < set_size+1:
             results.append(l)
         elif target < sum(l):
             return
