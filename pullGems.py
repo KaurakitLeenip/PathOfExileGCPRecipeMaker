@@ -117,4 +117,3 @@ def pull_gems(poe_session_id):
     print(list_of_gems)
     return list_of_gems
 #print(get_leagues())
-#gems("6630cbafa621cc72dc09a254518f587b")
