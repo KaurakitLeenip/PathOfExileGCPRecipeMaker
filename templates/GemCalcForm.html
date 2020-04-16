@@ -9,20 +9,33 @@
 <body>
 
 <div class="container" style="margin: auto;">
-    <div class="row">
         <form id="input" action="#" method="post">
-            PoE Session ID:<br>
-            <input type="text" name="POESESSID" required/>
-            <select id="league" name="League">
-                {% for i in option_list %}
-                <option value="{{i}}">{{i}}</option>
-                {% endfor %}
-            </select>
-            Maximum number of Gems in recipe:
-            <input type="text" name="max_recipe_len" required/>
-            <input type="submit" value="Submit"/><br>
+            <div class="row">
+                <label for="sess">PoE Session ID:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="POESESSID" id="sess" required/>
+                </div>
+            </div>
+            <div class="row">
+                <label for="league">League:</label>
+                <div class="input-group">
+                    <select class="form-control" id="league" name="League">
+                        {% for i in option_list %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label for="max">Maximum number of Gems in recipe:</label>
+                <div class="input-group">
+                    <input id="max" class="form-control" type="text" name="max_recipe_len" required/>
+                </div>
+            </div>
+            <div class="row">
+                <input type="submit" class="btn btn-primary" value="Submit"/>
+            </div>
         </form>
-    </div>
     <div class="row">
 
     </div>
