@@ -1,3 +1,4 @@
+from websocket import emit_message
 import requests
 import json
 from time import sleep
@@ -9,10 +10,10 @@ POE_STASH_URL = 'https://pathofexile.com/character-window/get-stash-items?accoun
 POE_NUM_TABS_URL = 'https://pathofexile.com/character-window/get-stash-items?accountName=SerBubblez&league=Delirium&tabIndex=1&tabs=1'
 SESSION_ID = ''
 
-def gems(sess_id, max_recipe_length, league):
+def gems(sess_id, max_recipe_length, league, app):
 
     total_gems, remainder, gems_in_results = 0, 0, 0
-    ordered_list_of_gems = get_stash(sess_id, league)
+    ordered_list_of_gems = get_stash(sess_id, league, app)
     gem_keys = list(ordered_list_of_gems.keys())
 
     gem_set = []
@@ -50,9 +51,9 @@ def get_leagues():
 
 #get account name from /character-window/get-account-name
 #add that to the stash url and num_tabs url
-def get_stash(sess_id, league):
+def get_stash(sess_id, league, app):
 
-    list_of_gems = pull_gems(sess_id.strip())
+    list_of_gems = pull_gems(sess_id.strip(), league, app)
     ordered_list_of_gems = OrderedDict(sorted(list_of_gems.items(), key=lambda t: t[1], reverse=True))
     return ordered_list_of_gems
 
@@ -66,7 +67,7 @@ def get_account_name(poe_session_id):
         return acc_name
 
 
-def pull_gems(poe_session_id):
+def pull_gems(poe_session_id, league, app):
     """
     will use a session id to pull stash tab data from the poe website - json -> dictionary.
     iterates through all of it to pull gem data, leaving out level 20 gems as you probably dont want
@@ -80,22 +81,21 @@ def pull_gems(poe_session_id):
         list_of_gems[i] = 0
 
     sess_id = 'POESESSID=' + poe_session_id
-    url = 'https://pathofexile.com/character-window/get-stash-items?accountName={0}&league={1}&tabIndex='.format(get_account_name(poe_session_id), 'Standard')
+    url = 'https://pathofexile.com/character-window/get-stash-items?accountName={0}&league={1}&tabIndex='.format(get_account_name(poe_session_id), league)
     with requests.Session() as sess:
         i = 0
         headers = {'Cookie': sess_id}
         response = sess.post(POE_NUM_TABS_URL, headers=headers)
         content = json.loads(response.content)
         num_tabs = content["numTabs"]
-        print(num_tabs, " total stash tabs")
+        emit_message(str(num_tabs) + " total stash tabs", app)
         while i < 44:
             url_string = url + str(i)
-            print(url_string)
             response = sess.get(url_string, headers=headers)
             if response.status_code > 200:
-                print(response.status_code, response.reason)
+                emit_message(str(response.status_code) + response.reason, app)
                 sleepTime = 60
-                print("Being Throttled, please wait", sleepTime, "seconds")
+                emit_message("Being Throttled, please wait " + str(sleepTime) + " seconds", app)
                 sleep(sleepTime)
 
             else:
@@ -111,7 +111,7 @@ def pull_gems(poe_session_id):
                                 if quality < 20:
                                     list_of_gems[quality] += 1
 
-                print("Pulled Stash ID ", i)
+                emit_message("Pulled Stash ID " + str(i), app)
                 i += 1
 
     print(list_of_gems)
