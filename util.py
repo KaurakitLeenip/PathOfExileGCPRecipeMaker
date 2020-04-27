@@ -1,3 +1,6 @@
+import requests
+import json
+
 def check_gems(ordered_list_of_gems, array_of_gems):
     """
     checks if a set of gems exists in an orderedDict of
@@ -13,6 +16,17 @@ def check_gems(ordered_list_of_gems, array_of_gems):
             exists = False
 
     return exists
+
+
+def get_leagues():
+    res = []
+    league_url = "https://www.pathofexile.com/api/leagues"
+    with requests.Session() as sess:
+        response = sess.get(league_url)
+        content = json.loads(response.content)
+        for item in content:
+            res.append(item['id'])
+    return res
 
 def get_key(ordered_list_of_gems, index):
     """
