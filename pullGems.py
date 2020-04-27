@@ -137,6 +137,3 @@ class PullGemsThread(Thread):
                             list_of_gems[quality] += 1
 
         self.status_message = ("Pulled Stash ID " + str(tab_num))
-
-
-#print(get_leagues())
