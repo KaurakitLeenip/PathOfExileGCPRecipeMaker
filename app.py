@@ -2,56 +2,81 @@ from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 from pullGems import *
 from threading import Thread, Event
+from websocket import get_status_message
+from time import sleep
 
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-thread = Thread()
+thread = None
 thread_stop_event = Event()
-class StatusCheckThread(Thread):
-    def __init__(self):
-        self.delay = 1
-        super(StatusCheckThread, self).__init__()
-
-    def getStatusCheck(self):
-        while not thread_stop_event.isSet():
-            #query for status i guess
-            socketio.emit('newstatus', {'line': "adsfas"}, namespace='/')
-
-    def run(self):
-        # self.getStatusCheck()
-        pass
+# class StatusCheckThread(Thread):
+#     def __init__(self):
+#         self.delay = 1
+#         super(StatusCheckThread, self).__init__()
+#
+#     def getStatusCheck(self):
+#         while not thread_stop_event.isSet():
+#             #query for status i guess
+#             status = get_status_message()
+#             if status != "":
+#                 socketio.emit('newstatus', {'line': status}, namespace='/')
+#
+#     def run(self):
+#         self.getStatusCheck()
+#         sleep(2)
 
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
         return render_template('GemCalcForm.html', option_list=get_leagues())
-    # else:
-    #     #get the form details and pull gems
-    #     sess_id = request.form['POESESSID']
-    #     league = request.form['League']
-    #     max_num = int(request.form['max_recipe_len'])
-    #     res = gems(sess_id, max_num, league, socketio)
-    #     return render_template('results.html', output=res)
+    if request.method == 'POST':
+        sess_id = request.form['POESESSID']
+        league = request.form['League']
+        max_num = int(request.form['max_recipe_len'])
+        global thread
+        thread = PullGemsThread(sess_id, max_num, league)
+        thread.start()
+        thread.join()
+        thread = None
+        return render_template('results.html', output=thread.results)
+
+@app.route("/set_progress/", methods=['GET'])
+def get_prog():
+    global thread
+    print("checking progs")
+    if thread:
+        print(thread.status_message)
+        status = thread.status_message
+        return str(status)
+    return "NONE"
+
 
 @socketio.on('form_submit', namespace='/')
 def get_message(message):
+    #get form and pull gems
     print(message)
     sess_id = message['POESESSID']
     league = message['league']
     max_num = int(message['max'])
-    res = gems(sess_id, max_num, league, socketio)
-    return render_template('results.html', output=res)
+    global thread
+    thread = PullGemsThread(sess_id, max_num, league)
+    thread.start()
+    thread.join()
+    thread = None
+
+# @socketio.on('get_status')
+# def set_message():
+#     global thread
+#     if thread:
+#         print(thread.status_message)
+#         status = thread.status_message
+#         socketio.emit('newstatus', {'line': status}, namespace='/')
+
 
 @socketio.on('connect', namespace='/')
 def test_connect():
-    global thread
-
-    if not thread.isAlive():
-        thread = StatusCheckThread()
-        thread.start()
-        socketio.emit('newstatus', {'line': "adsfas"}, namespace='/')
 
     print('client connected')
 
