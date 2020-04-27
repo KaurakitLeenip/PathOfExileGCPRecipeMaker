@@ -39,7 +39,6 @@ def index():
         thread = PullGemsThread(sess_id, max_num, league)
         thread.start()
         thread.join()
-        thread = None
         return render_template('results.html', output=thread.results)
 
 @app.route("/set_progress/", methods=['GET'])

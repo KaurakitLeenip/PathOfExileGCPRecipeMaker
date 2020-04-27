@@ -14,12 +14,9 @@ $(document).ready(function(){
 
     $('form#input').submit(function(event){
         console.log('asdfasdf')
-        socket.emit('form_submit', {
-            POESESSID: $('#sess').val(),
-            league: $("#league").val(),
-            max: $("#max").val()
-            })
-        return false
+        jQuery.post('/', $('form#input').serialize(), function(data) {
+                console.log("dopnje")
+        })
     })
 
 
