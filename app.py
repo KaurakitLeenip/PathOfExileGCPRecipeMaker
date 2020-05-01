@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, abort
 from flask_socketio import SocketIO, emit
 from pullGems import *
 from threading import Thread, Event
@@ -36,20 +36,23 @@ def index():
         league = request.form['League']
         max_num = int(request.form['max_recipe_len'])
         global thread
-        thread = PullGemsThread(sess_id, max_num, league)
-        thread.start()
-        thread.join()
-        return render_template('results.html', output=thread.results)
+        try:
+            thread = PullGemsThread(sess_id, max_num, league)
+            thread.start()
+            return render_template('results.html', output=thread.results)
+        except ValueError:
+            # poe api is rate limiting you
+            abort(429)
 
 @app.route("/set_progress/", methods=['GET'])
 def get_prog():
     global thread
-    print("checking progs")
-    if thread:
+    if thread.isAlive():
         print(thread.status_message)
         status = thread.status_message
         return str(status)
-    return "NONE"
+    else:
+        return str(thread.results)
 
 
 @socketio.on('form_submit', namespace='/')

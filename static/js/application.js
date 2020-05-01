@@ -1,8 +1,7 @@
 $(document).ready(function(){
     var socket = io.connect('http://' + document.domain + ':' + location.port);
-
     var status = [];
-
+    var timer;
 
     //get details
     socket.on('newstatus', function(msg){
@@ -13,10 +12,11 @@ $(document).ready(function(){
     })
 
     $('form#input').submit(function(event){
-        console.log('asdfasdf')
+    timer = setInterval(update_status, 1000)
         jQuery.post('/', $('form#input').serialize(), function(data) {
-                console.log("dopnje")
+            clearTimeout(timer)
         })
+        event.preventDefault()
     })
 
 
@@ -25,8 +25,8 @@ $(document).ready(function(){
 
 function update_status(){
     jQuery.get('set_progress/', function(data){
+        $('#log').empty();
         $('#log').append("<p>" + data + "</p>")
-        setTimeout(update_status, 1000)
     })
 }
 

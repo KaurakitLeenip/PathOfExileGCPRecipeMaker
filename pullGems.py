@@ -98,7 +98,7 @@ class PullGemsThread(Thread):
             num_tabs = content["numTabs"]
             self.status_message = (str(num_tabs) + " total stash tabs")
             #TODO: change from debug number
-            while i < 50:
+            while i < 55:
                 url_string = url + str(i)
                 response = sess.get(url_string, headers=headers)
                 if response.status_code > 200:
