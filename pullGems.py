@@ -1,6 +1,3 @@
-from websocket import set_status_message
-import requests
-import json
 from time import sleep
 from util import *
 from gemCalc import *
@@ -35,22 +32,22 @@ class PullGemsThread(Thread):
         list_of_recipes = subsets_with_sum(gem_keys, 40, max_recipe_length)
         num = get_key(ordered_list_of_gems, 0)
         list_of_recipes = sorted(list_of_recipes, key=lambda x:(x != num))
-
         results, remainder, remaining_gems = gem_calc(ordered_list_of_gems, list_of_recipes)
+        print(results)
 
         for k,v in results.items():
-            temp_keys = k.strip('[]').split(', ')
-            temp_keys = list(map(int, temp_keys))
+            # temp_keys = k.strip('[]').split(', ')
+            temp_keys = list(map(int, k))
             gems_in_results += (len(temp_keys)*v)
             temp_keys.sort(reverse=True)
             total_gems += (len(temp_keys) * v)
             gem_set.append("{0}: {1}".format(temp_keys, v))
-            print("Quality Gems Set", temp_keys, ':', v)
+            # print("Quality Gems Set", temp_keys, ':', v)
 
         print(remainder, "Gems Remaining")
         print(len(results), "different recipes")
-
-        return gem_set
+        #TODO: send these back to the user as well
+        return results
 
     #get account name from /character-window/get-account-name
     #add that to the stash url and num_tabs url
@@ -93,12 +90,12 @@ class PullGemsThread(Thread):
             response = sess.post(self.POE_NUM_TABS_URL.format(account_name, league), headers=headers)
             content = json.loads(response.content)
             if 'error' in content.keys():
-                raise ValueError
-            #TODO: error handling when rate limited
+                self.results.append('You are being rate limited. Please try again later.')
+                return
             num_tabs = content["numTabs"]
             self.status_message = (str(num_tabs) + " total stash tabs")
             #TODO: change from debug number
-            while i < 55:
+            while i < 12:
                 url_string = url + str(i)
                 response = sess.get(url_string, headers=headers)
                 if response.status_code > 200:

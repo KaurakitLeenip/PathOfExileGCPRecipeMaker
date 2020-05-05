@@ -8,7 +8,7 @@ def gem_calc(ordered_list_of_gems, list_of_recipes):
     will sort the recipes in order of the top two largest buckets of gems
     returns the resulting dict of setOfGems:amount and the number of remaining gems
     :param ordered_list_of_gems: list of gems by quality number
-    :param list_of_recipes: an array containing gem recipes
+    :param list_of_recipes: an list containing gem recipes
     :return: all recipes that will be required and how many times to use them
     """
     results = {}
@@ -34,10 +34,10 @@ def gem_calc(ordered_list_of_gems, list_of_recipes):
             for k in j:
                 if ordered_list_of_gems[int(k)] >= 1:
                     ordered_list_of_gems[int(k)] = ordered_list_of_gems[int(k)] - 1
-            if str(j) not in results:
-                results[str(j)] = 1
-            elif str(j) in results:
-                results[str(j)] += 1
+            if tuple(j) not in results:
+                results[tuple(j)] = 1
+            elif tuple(j) in results:
+                results[tuple(j)] += 1
             ordered_list_of_gems = OrderedDict(sorted(ordered_list_of_gems.items(), key=lambda t: t[1], reverse=True))
             gems_to_remove = find_empty_buckets(ordered_list_of_gems)
 
