@@ -14,7 +14,6 @@ def index():
         sess_id = request.form['POESESSID']
         league = request.form['League']
         max_num = int(request.form['max_recipe_len'])
-        print("received form")
         global thread
         try:
             thread = PullGemsThread(sess_id, max_num, league)
@@ -49,7 +48,7 @@ def get_results():
                 loader=template_loader, autoescape=select_autoescape(['html', 'xml']))
             template_file = "/templates/results.html"
             template = templateEnv.get_template(template_file)
-            output = template.render(output=results)
+            output = template.render(output=results, remainder=thread.remainder, recipes=thread.recipes)
             print(output)
             return output
     abort(404)

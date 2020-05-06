@@ -9,6 +9,9 @@ class PullGemsThread(Thread):
     POE_NUM_TABS_URL = 'https://pathofexile.com/character-window/get-stash-items?accountName={0}&league={1}&tabIndex=1&tabs=1'
     SESSION_ID = ''
     results = []
+    num_tabs = 0
+    remainder = 0
+    recipes = 0
 
     def __init__(self, sess_id, max_recipe_length, league):
         self.status_message = ""
@@ -18,7 +21,7 @@ class PullGemsThread(Thread):
         super().__init__()
 
     def run(self):
-        self.results = self.gems(self.sess_id, self.max_recipe_length, self.league)
+        self.gems(self.sess_id, self.max_recipe_length, self.league)
 
 
     def gems(self, sess_id, max_recipe_length, league):
@@ -42,12 +45,10 @@ class PullGemsThread(Thread):
             temp_keys.sort(reverse=True)
             total_gems += (len(temp_keys) * v)
             gem_set.append("{0}: {1}".format(temp_keys, v))
-            # print("Quality Gems Set", temp_keys, ':', v)
 
-        print(remainder, "Gems Remaining")
-        print(len(results), "different recipes")
-        #TODO: send these back to the user as well
-        return results
+        self.results = results
+        self.remainder = sum(remainder.values())
+        self.recipes = len(results)
 
     #get account name from /character-window/get-account-name
     #add that to the stash url and num_tabs url
@@ -93,9 +94,9 @@ class PullGemsThread(Thread):
                 self.results.append('You are being rate limited. Please try again later.')
                 return
             num_tabs = content["numTabs"]
+            self.num_tabs = num_tabs
             self.status_message = (str(num_tabs) + " total stash tabs")
-            #TODO: change from debug number
-            while i < 12:
+            while i < num_tabs:
                 url_string = url + str(i)
                 response = sess.get(url_string, headers=headers)
                 if response.status_code > 200:
@@ -126,6 +127,7 @@ class PullGemsThread(Thread):
                 for property in item['properties']:
                     gemLevel = 0
                     if property['name'] == 'Level':
+                        #TODO: explain what this does
                         gemLevel = property['values'][0][0].split(" ")
                         gemLevel = int(gemLevel[0])
                     if property['name'] == 'Quality' and gemLevel != 20:
@@ -133,4 +135,4 @@ class PullGemsThread(Thread):
                         if quality < 20:
                             list_of_gems[quality] += 1
 
-        self.status_message = ("Pulled Stash ID " + str(tab_num))
+        self.status_message = ("Pulled Stash ID {0}/{1}".format(str(tab_num), self.num_tabs))

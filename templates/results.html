@@ -1,20 +1,20 @@
-<div class="container">
-    <div class="row">
-        <div class="col-sm">
-            <p>Gem Qualities</p>
-        </div>
-        <div class="col-sm">
-            <p>Number of Recipes</p>
-        </div>
-    </div>
+<div class="container text-white pt-2">
     {% for k, v in output.items() %}
     <div class="row">
         {% for j in k %}
-        <div class="column">
+        <div class="col">
             <img src="/static/img/Portal{{j}}.png"/>
         </div>
         {% endfor %}
-        <div class="column">{{v}}</div>
+        <div class="col">
+            <h2 class="text-right"> x{{v}}</h2>
+        </div>
     </div>
     {% endfor %}
+    <div class="row">
+        <h4 class="text-left">{{remainder}} remaining gems</h4>
+    </div>
+    <div class="row">
+        <h4 class="text-left">{{recipes}} different recipes</h4>
+    </div>
 </div>
